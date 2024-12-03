@@ -11,4 +11,6 @@ public interface CalenderService {
     CalenderResponseDto createCalender(CalenderRequestDto dto);
 
     List<UpdateAtAndNameDto> findAllCalender();
+
+    CalenderResponseDto findById(Long id);
 }

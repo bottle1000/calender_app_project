@@ -32,4 +32,10 @@ public class CalenderController {
         return calenderService.findAllCalender();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<CalenderResponseDto> findById(@PathVariable Long id) {
+
+        return new ResponseEntity<>(calenderService.findById(id), HttpStatus.OK);
+    }
+
 }

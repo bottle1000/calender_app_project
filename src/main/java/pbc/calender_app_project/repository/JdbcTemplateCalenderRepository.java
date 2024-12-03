@@ -1,21 +1,18 @@
 package pbc.calender_app_project.repository;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import pbc.calender_app_project.dto.CalenderResponseDto;
+import pbc.calender_app_project.dto.UpdateAtAndNameDto;
 import pbc.calender_app_project.entity.Calender;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class JdbcTemplateCalenderRepository implements CalenderRepository {
@@ -43,17 +40,38 @@ public class JdbcTemplateCalenderRepository implements CalenderRepository {
     }
 
     @Override
-    public List<CalenderResponseDto> findAllCalenders() {
+    public List<UpdateAtAndNameDto> findAllCalenders() {
         return jdbcTemplate.query("select * from calender", calenderMapper());
     }
 
-    private RowMapper<CalenderResponseDto> calenderMapper() {
+    @Override
+    public Optional<CalenderResponseDto> findById(Long id) {
+        List<CalenderResponseDto> result = jdbcTemplate.query("select * from calender where id = ?", calenderIdRowMapper(), id);
+        return result.stream().findAny();
+    }
+
+    private RowMapper<UpdateAtAndNameDto> calenderMapper() {
+        return new RowMapper<UpdateAtAndNameDto>() {
+            @Override
+            public UpdateAtAndNameDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+                return new UpdateAtAndNameDto(
+                       rs.getTimestamp("updated_at").toLocalDateTime().toLocalDate(),
+                        rs.getString("name")
+                );
+            }
+        };
+    }
+
+    private RowMapper<CalenderResponseDto> calenderIdRowMapper() {
         return new RowMapper<CalenderResponseDto>() {
             @Override
             public CalenderResponseDto mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return new CalenderResponseDto(
-                       rs.getTimestamp("updated_at").toLocalDateTime().toLocalDate(),
-                        rs.getString("name")
+                        rs.getLong("id"),
+                        rs.getString("name"),
+                        rs.getString("todo_list"),
+                        rs.getDate("created_at").toLocalDate(),
+                        rs.getDate("updated_at").toLocalDate()
                 );
             }
         };
