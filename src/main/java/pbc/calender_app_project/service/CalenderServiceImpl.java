@@ -72,10 +72,17 @@ public class CalenderServiceImpl implements CalenderService{
 
     @Override
     public void removeCalender(Long id, String password) {
-        if (validationPassword(id, password)) {
-            calenderRepository.removeCalender(id);
-            log.info("정상적으로 삭제되었습니다.");
-        }
+
+        /**
+         * 비밀번호 검증 중 예외 발생 시 여기서 중단
+         */
+        validationPassword(id, password);
+
+        /**
+         * 삭제 실행
+         */
+        calenderRepository.removeCalender(id);
+        log.info("정상적으로 삭제되었습니다."); //디버깅용 로그
     }
 
     /**
