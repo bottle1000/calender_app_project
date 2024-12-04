@@ -13,4 +13,6 @@ public interface CalenderService {
     CalenderResponseDto findById(Long id);
 
     CalenderResponseDto updateTodoListAndName(Long id, String todoList, String name, String password);
+
+    void removeCalender(Long id, String password);
 }

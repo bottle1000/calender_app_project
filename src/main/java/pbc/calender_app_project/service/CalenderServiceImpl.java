@@ -65,6 +65,16 @@ public class CalenderServiceImpl implements CalenderService{
         return null;
     }
 
+    @Override
+    public void removeCalender(Long id, String password) {
+        if (!validationPassword(id, password)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 맞지 않습니다.");
+        }
+
+        calenderRepository.removeCalender(id);
+        log.info("정상적으로 삭제되었습니다.");
+    }
+
 
     /**
      * 비밀번호 검증
@@ -73,7 +83,7 @@ public class CalenderServiceImpl implements CalenderService{
         String calenderPassword = calenderRepository.findById(id).get().getPassword();
 
         if (!calenderPassword.equals(password)) {
-            throw new IllegalArgumentException("비밀번호가 같지 않습니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 맞지 않습니다.");
         }
         return true;
     }
