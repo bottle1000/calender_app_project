@@ -1,7 +1,6 @@
 package pbc.calender_app_project.repository;
 
 import pbc.calender_app_project.dto.CalenderResponseDto;
-import pbc.calender_app_project.dto.UpdateAtAndNameDto;
 import pbc.calender_app_project.entity.Calender;
 
 import java.util.List;
@@ -11,7 +10,9 @@ public interface CalenderRepository {
 
     CalenderResponseDto createCalender(Calender calender);
 
-    List<UpdateAtAndNameDto> findAllCalenders();
+    List<Calender> findAllCalenders();
 
-    Optional<CalenderResponseDto> findById(Long id);
+    Optional<Calender> findById(Long id);
+
+    int updateTodoListAndName(Long id, String todoList, String name);
 }

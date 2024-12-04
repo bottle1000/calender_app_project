@@ -1,7 +1,9 @@
 package pbc.calender_app_project.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import pbc.calender_app_project.entity.Calender;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -9,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CalenderResponseDto {
 
     private Long id;
@@ -26,5 +29,13 @@ public class CalenderResponseDto {
     public CalenderResponseDto(LocalDate updatedAt, String name) {
         this.updateDate = updatedAt;
         this.name = name;
+    }
+
+    public CalenderResponseDto(Calender calender) {
+        this.id = calender.getId();
+        this.name = calender.getName();
+        this.toDoList = calender.getToDoList();
+        this.writeDate = calender.getWriteDate();
+        this.updateDate = calender.getUpdateDate();
     }
 }

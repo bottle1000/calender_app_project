@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pbc.calender_app_project.dto.CalenderRequestDto;
 import pbc.calender_app_project.dto.CalenderResponseDto;
-import pbc.calender_app_project.dto.UpdateAtAndNameDto;
 import pbc.calender_app_project.service.CalenderService;
 
 import java.util.List;
@@ -27,7 +26,7 @@ public class CalenderController {
     }
 
     @GetMapping
-    public List<UpdateAtAndNameDto> findAllCalender() {
+    public List<CalenderResponseDto> findAllCalender() {
 
         return calenderService.findAllCalender();
     }

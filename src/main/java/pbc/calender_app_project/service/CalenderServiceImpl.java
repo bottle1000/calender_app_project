@@ -1,15 +1,14 @@
 package pbc.calender_app_project.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import pbc.calender_app_project.dto.CalenderRequestDto;
 import pbc.calender_app_project.dto.CalenderResponseDto;
-import pbc.calender_app_project.dto.UpdateAtAndNameDto;
 import pbc.calender_app_project.entity.Calender;
 import pbc.calender_app_project.repository.CalenderRepository;
 
-import java.time.LocalDate;
 import java.util.*;
 
 @Slf4j
@@ -30,16 +29,25 @@ public class CalenderServiceImpl implements CalenderService{
     }
 
     @Override
-    public List<UpdateAtAndNameDto> findAllCalender() {
+    public List<CalenderResponseDto> findAllCalender() {
         return calenderRepository.findAllCalenders().stream()
-                .sorted(Comparator.comparing(UpdateAtAndNameDto::getUpdateDate).reversed())
-                .map(dto -> new UpdateAtAndNameDto(dto.getUpdateDate(), dto.getName()))
+                .sorted(Comparator.comparing(Calender::getUpdateDate).reversed())
+                .map(calender -> new CalenderResponseDto(calender.getUpdateDate(), calender.getName()))
                 .toList();
     }
 
     @Override
     public CalenderResponseDto findById(Long id) {
-         return calenderRepository.findById(id)
-                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 아이디 입니다."));
+        Optional<Calender> optionalCalender = calenderRepository.findById(id);
+
+        /**
+         * NullPointException 방지
+         */
+        if (optionalCalender.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 정보가 존재하지 않습니다!");
+        }
+
+        return new CalenderResponseDto(optionalCalender.get());
     }
+
 }

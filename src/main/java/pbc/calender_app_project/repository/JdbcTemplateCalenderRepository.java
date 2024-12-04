@@ -1,12 +1,12 @@
 package pbc.calender_app_project.repository;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import pbc.calender_app_project.dto.CalenderResponseDto;
-import pbc.calender_app_project.dto.UpdateAtAndNameDto;
 import pbc.calender_app_project.entity.Calender;
 
 import java.sql.ResultSet;
@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Slf4j
 @Repository
 public class JdbcTemplateCalenderRepository implements CalenderRepository {
     private JdbcTemplate jdbcTemplate;
@@ -40,36 +41,32 @@ public class JdbcTemplateCalenderRepository implements CalenderRepository {
     }
 
     @Override
-    public List<UpdateAtAndNameDto> findAllCalenders() {
-        return jdbcTemplate.query("select * from calender", calenderMapper());
+    public List<Calender> findAllCalenders() {
+        List<Calender> query = jdbcTemplate.query("select * from calender", calenderRowMapper());
+        return query;
     }
 
     @Override
-    public Optional<CalenderResponseDto> findById(Long id) {
-        List<CalenderResponseDto> result = jdbcTemplate.query("select * from calender where id = ?", calenderIdRowMapper(), id);
+    public Optional<Calender> findById(Long id) {
+        List<Calender> result = jdbcTemplate.query("select * from calender where id = ?", calenderRowMapper(), id);
         return result.stream().findAny();
     }
 
-    private RowMapper<UpdateAtAndNameDto> calenderMapper() {
-        return new RowMapper<UpdateAtAndNameDto>() {
-            @Override
-            public UpdateAtAndNameDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return new UpdateAtAndNameDto(
-                       rs.getTimestamp("updated_at").toLocalDateTime().toLocalDate(),
-                        rs.getString("name")
-                );
-            }
-        };
+
+    @Override
+    public int updateTodoListAndName(Long id, String todoList, String name) {
+        return jdbcTemplate.update("update calender set todo_list = ?, name = ? where id = ?", todoList, name, id);
     }
 
-    private RowMapper<CalenderResponseDto> calenderIdRowMapper() {
-        return new RowMapper<CalenderResponseDto>() {
+    private RowMapper<Calender> calenderRowMapper() {
+        return new RowMapper<Calender>() {
             @Override
-            public CalenderResponseDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return new CalenderResponseDto(
+            public Calender mapRow(ResultSet rs, int rowNum) throws SQLException {
+                return new Calender(
                         rs.getLong("id"),
-                        rs.getString("name"),
                         rs.getString("todo_list"),
+                        rs.getString("name"),
+                        rs.getString("password"),
                         rs.getDate("created_at").toLocalDate(),
                         rs.getDate("updated_at").toLocalDate()
                 );
