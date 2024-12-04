@@ -15,4 +15,6 @@ public interface CalenderRepository {
     Optional<Calender> findById(Long id);
 
     int updateTodoListAndName(Long id, String todoList, String name);
+
+    int removeCalender(Long id);
 }

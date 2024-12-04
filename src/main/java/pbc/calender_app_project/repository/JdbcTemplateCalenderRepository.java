@@ -58,6 +58,10 @@ public class JdbcTemplateCalenderRepository implements CalenderRepository {
         return jdbcTemplate.update("update calender set todo_list = ?, name = ? where id = ?", todoList, name, id);
     }
 
+    @Override
+    public int removeCalender(Long id) {
+        return jdbcTemplate.update("delete from calender where id = ? ;", id);
+    }
 
 
     private RowMapper<Calender> calenderRowMapper() {
