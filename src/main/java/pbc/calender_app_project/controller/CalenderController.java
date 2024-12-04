@@ -42,4 +42,9 @@ public class CalenderController {
 
         return new ResponseEntity<>(calenderService.updateTodoListAndName(id, dto.getTodoList(), dto.getName(), dto.getPassword()), HttpStatus.OK);
     }
+
+    @DeleteMapping("/{id}")
+    public void removeCalender(@PathVariable Long id, @RequestBody CalenderRequestDto dto) {
+        calenderService.removeCalender(id, dto.getPassword());
+    }
 }
