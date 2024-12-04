@@ -11,4 +11,6 @@ public interface CalenderService {
     List<CalenderResponseDto> findAllCalender();
 
     CalenderResponseDto findById(Long id);
+
+    CalenderResponseDto updateTodoListAndName(Long id, String todoList, String name, String password);
 }

@@ -37,4 +37,9 @@ public class CalenderController {
         return new ResponseEntity<>(calenderService.findById(id), HttpStatus.OK);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<CalenderResponseDto> updateTodoListAndName(@PathVariable Long id, @RequestBody CalenderRequestDto dto) {
+
+        return new ResponseEntity<>(calenderService.updateTodoListAndName(id, dto.getTodoList(), dto.getName(), dto.getPassword()), HttpStatus.OK);
+    }
 }

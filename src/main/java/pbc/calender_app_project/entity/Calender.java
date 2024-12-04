@@ -10,22 +10,22 @@ import java.time.LocalDate;
 public class Calender {
 
     private Long id;
-    private String toDoList;
+    private String todoList;
     private String name;
     private String password;
     private LocalDate writeDate;
     private LocalDate updateDate;
 
-    public Calender(String toDoList, String name, String password) {
-        this.toDoList = toDoList;
+    public Calender(String todoList, String name, String password) {
+        this.todoList = todoList;
         this.name = name;
         this.password = password;
     }
 
-    public Calender(Long id, String name, String toDoList, LocalDate writeDate, LocalDate updateDate) {
+    public Calender(Long id, String name, String todoList, LocalDate writeDate, LocalDate updateDate) {
         this.id = id;
         this.name = name;
-        this.toDoList = toDoList;
+        this.todoList = todoList;
         this.writeDate = writeDate;
         this.updateDate = updateDate;
     }

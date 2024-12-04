@@ -5,9 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import pbc.calender_app_project.entity.Calender;
 
-import java.sql.Date;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
@@ -34,7 +32,7 @@ public class CalenderResponseDto {
     public CalenderResponseDto(Calender calender) {
         this.id = calender.getId();
         this.name = calender.getName();
-        this.toDoList = calender.getToDoList();
+        this.toDoList = calender.getTodoList();
         this.writeDate = calender.getWriteDate();
         this.updateDate = calender.getUpdateDate();
     }

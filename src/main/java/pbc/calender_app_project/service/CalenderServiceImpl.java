@@ -24,7 +24,7 @@ public class CalenderServiceImpl implements CalenderService{
     @Override
     public CalenderResponseDto createCalender(CalenderRequestDto dto) {
 
-        Calender calender = new Calender(dto.getToDoList(), dto.getName(), dto.getPassword());
+        Calender calender = new Calender(dto.getTodoList(), dto.getName(), dto.getPassword());
         return calenderRepository.createCalender(calender);
     }
 
@@ -48,6 +48,34 @@ public class CalenderServiceImpl implements CalenderService{
         }
 
         return new CalenderResponseDto(optionalCalender.get());
+    }
+
+    @Override
+    public CalenderResponseDto updateTodoListAndName(Long id, String todoList, String name, String password) {
+
+         // 디버깅용
+        log.info("todoList : {}", todoList);
+        log.info("name : {}", name);
+
+        if (validationPassword(id, password)) {
+            calenderRepository.updateTodoListAndName(id, todoList, name);
+            return new CalenderResponseDto(calenderRepository.findById(id).get());
+        }
+
+        return null;
+    }
+
+
+    /**
+     * 비밀번호 검증
+     */
+    private boolean validationPassword(Long id, String password){
+        String calenderPassword = calenderRepository.findById(id).get().getPassword();
+
+        if (!calenderPassword.equals(password)) {
+            throw new IllegalArgumentException("비밀번호가 같지 않습니다.");
+        }
+        return true;
     }
 
 }

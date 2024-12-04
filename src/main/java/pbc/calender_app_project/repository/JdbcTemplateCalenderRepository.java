@@ -30,14 +30,14 @@ public class JdbcTemplateCalenderRepository implements CalenderRepository {
         jdbcInsert.withTableName("calender").usingGeneratedKeyColumns("id");
 
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("todo_list", calender.getToDoList());
+        parameters.put("todo_list", calender.getTodoList());
         parameters.put("name", calender.getName());
         parameters.put("password", calender.getPassword());
         parameters.put("created_at", LocalDateTime.now());
         parameters.put("updated_at", LocalDateTime.now());
 
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
-        return new CalenderResponseDto(key.longValue(), calender.getToDoList(), calender.getName());
+        return new CalenderResponseDto(key.longValue(), calender.getTodoList(), calender.getName());
     }
 
     @Override
@@ -57,6 +57,8 @@ public class JdbcTemplateCalenderRepository implements CalenderRepository {
     public int updateTodoListAndName(Long id, String todoList, String name) {
         return jdbcTemplate.update("update calender set todo_list = ?, name = ? where id = ?", todoList, name, id);
     }
+
+
 
     private RowMapper<Calender> calenderRowMapper() {
         return new RowMapper<Calender>() {

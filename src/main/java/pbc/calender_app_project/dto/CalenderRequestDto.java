@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Getter
 public class CalenderRequestDto {
 
-    private String toDoList;
+    private String todoList;
     private String name;
     private String password;
     private LocalDateTime writeDate;
