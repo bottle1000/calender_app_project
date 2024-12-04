@@ -57,27 +57,32 @@ public class CalenderServiceImpl implements CalenderService{
         log.info("todoList : {}", todoList);
         log.info("name : {}", name);
 
-        if (validationPassword(id, password)) {
-            calenderRepository.updateTodoListAndName(id, todoList, name);
-            return new CalenderResponseDto(calenderRepository.findById(id).get());
-        }
+        /**
+         * 비밀번호 검증 중 예외 발생 시 여기서 중단
+         */
+        validationPassword(id, password);
 
-        return null;
+        /**
+         * 업데이트 실행
+         */
+        calenderRepository.updateTodoListAndName(id, todoList, name);
+
+        return new CalenderResponseDto(calenderRepository.findById(id).get());
     }
 
     @Override
     public void removeCalender(Long id, String password) {
-        if (!validationPassword(id, password)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 맞지 않습니다.");
+        if (validationPassword(id, password)) {
+            calenderRepository.removeCalender(id);
+            log.info("정상적으로 삭제되었습니다.");
         }
-
-        calenderRepository.removeCalender(id);
-        log.info("정상적으로 삭제되었습니다.");
     }
-
 
     /**
      * 비밀번호 검증
+     * @param id
+     * @param password
+     * @return
      */
     private boolean validationPassword(Long id, String password){
         String calenderPassword = calenderRepository.findById(id).get().getPassword();
