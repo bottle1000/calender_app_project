@@ -4,7 +4,6 @@ import pbc.calender_app_project.dto.CalenderResponseDto;
 import pbc.calender_app_project.entity.Calender;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CalenderRepository {
 
@@ -12,9 +11,9 @@ public interface CalenderRepository {
 
     List<Calender> findAllCalenders();
 
-    Optional<Calender> findById(Long id);
+    List<Calender> findById(Long id);
 
-    int updateTodoListAndName(Long id, String todoList, String name);
+    void updateTodoListAndName(Long id, String todoList, String name);
 
     int removeCalender(Long id);
 }

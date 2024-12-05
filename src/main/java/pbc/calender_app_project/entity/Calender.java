@@ -11,20 +11,19 @@ public class Calender {
 
     private Long id;
     private String todoList;
-    private String name;
     private String password;
     private LocalDate writeDate;
     private LocalDate updateDate;
+    private Author author;
 
-    public Calender(String todoList, String name, String password) {
+    public Calender(String todoList,String password, Author author) {
         this.todoList = todoList;
-        this.name = name;
         this.password = password;
+        this.author = author;
     }
 
-    public Calender(Long id, String name, String todoList, LocalDate writeDate, LocalDate updateDate) {
+    public Calender(Long id,String todoList, LocalDate writeDate, LocalDate updateDate) {
         this.id = id;
-        this.name = name;
         this.todoList = todoList;
         this.writeDate = writeDate;
         this.updateDate = updateDate;

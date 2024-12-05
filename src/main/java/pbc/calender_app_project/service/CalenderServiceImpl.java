@@ -24,30 +24,37 @@ public class CalenderServiceImpl implements CalenderService{
     @Override
     public CalenderResponseDto createCalender(CalenderRequestDto dto) {
 
-        Calender calender = new Calender(dto.getTodoList(), dto.getName(), dto.getPassword());
+        Calender calender = new Calender(dto.getTodoList(), dto.getPassword(),dto.getAuthor());
         return calenderRepository.createCalender(calender);
     }
 
+    /**
+     * 업데이트 날짜 내림차순으로 수정 날짜와 이름 조회
+     * -> 작성자의 고유 식별자를 통해 전체 일정 조회 코드 수정
+     */
     @Override
     public List<CalenderResponseDto> findAllCalender() {
         return calenderRepository.findAllCalenders().stream()
-                .sorted(Comparator.comparing(Calender::getUpdateDate).reversed())
-                .map(calender -> new CalenderResponseDto(calender.getUpdateDate(), calender.getName()))
+                .map(calender -> new CalenderResponseDto(calender.getTodoList(), calender.getAuthor()))
                 .toList();
     }
 
     @Override
-    public CalenderResponseDto findById(Long id) {
-        Optional<Calender> optionalCalender = calenderRepository.findById(id);
+    public List<CalenderResponseDto> findById(Long id) {
+        List<Calender> calenders = calenderRepository.findById(id);
 
         /**
          * NullPointException 방지
          */
-        if (optionalCalender.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 정보가 존재하지 않습니다!");
+        if (calenders.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 작성자의 일정이 존재하지 않습니다!");
         }
 
-        return new CalenderResponseDto(optionalCalender.get());
+        return calenders.stream()
+                .map(calender -> new CalenderResponseDto(
+                        calender.getTodoList(),
+                        calender.getAuthor()
+                )).toList();
     }
 
     @Override
@@ -67,7 +74,20 @@ public class CalenderServiceImpl implements CalenderService{
          */
         calenderRepository.updateTodoListAndName(id, todoList, name);
 
-        return new CalenderResponseDto(calenderRepository.findById(id).get());
+        /**
+         * 일정의 author_id 가져오기
+         */
+        List<Calender> updateCalenderList = calenderRepository.findById(id);
+        if (updateCalenderList.isEmpty()) {
+            throw new IllegalStateException("조회 아이디가 없습니다.");
+        }
+
+        Calender updateCalender = updateCalenderList.stream()
+                .filter(calender -> calender.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("조회 아이디가 없습니다."));
+
+        return new CalenderResponseDto(updateCalender.getId(), updateCalender.getTodoList(), updateCalender.getAuthor());
     }
 
     @Override
@@ -92,9 +112,10 @@ public class CalenderServiceImpl implements CalenderService{
      * @return
      */
     private boolean validationPassword(Long id, String password){
-        String calenderPassword = calenderRepository.findById(id).get().getPassword();
+        boolean isValid = calenderRepository.findById(id).stream()
+                .anyMatch(calender -> calender.getPassword().equals(password));
 
-        if (!calenderPassword.equals(password)) {
+        if (!isValid) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 맞지 않습니다.");
         }
         return true;

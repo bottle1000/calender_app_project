@@ -6,7 +6,9 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import pbc.calender_app_project.dto.CalenderResponseDto;
+import pbc.calender_app_project.entity.Author;
 import pbc.calender_app_project.entity.Calender;
 
 import java.sql.ResultSet;
@@ -26,59 +28,82 @@ public class JdbcTemplateCalenderRepository implements CalenderRepository {
     @Override
     public CalenderResponseDto createCalender(Calender calender) {
 
+        Author author = calender.getAuthor();
+
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
         jdbcInsert.withTableName("calender").usingGeneratedKeyColumns("id");
 
+
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("todo_list", calender.getTodoList());
-        parameters.put("name", calender.getName());
         parameters.put("password", calender.getPassword());
         parameters.put("created_at", LocalDateTime.now());
         parameters.put("updated_at", LocalDateTime.now());
+        parameters.put("author_id", author.getId());
 
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
-        return new CalenderResponseDto(key.longValue(), calender.getTodoList(), calender.getName());
+        return new CalenderResponseDto(key.longValue(), calender.getTodoList(), author);
     }
 
     @Override
     public List<Calender> findAllCalenders() {
-        List<Calender> query = jdbcTemplate.query("select * from calender", calenderRowMapper());
+        List<Calender> query = jdbcTemplate.query(
+                "select c.id as calender_id, c.todo_list, c.password, c.created_at, c.updated_at, c.author_id, " +
+                        "a.name, a.email, a.created_at, a.updated_at " +
+                        "from calender c " +
+                        "join author a on c.author_id = a.id", calenderRowMapper());
         return query;
     }
 
     @Override
-    public Optional<Calender> findById(Long id) {
-        List<Calender> result = jdbcTemplate.query("select * from calender where id = ?", calenderRowMapper(), id);
-        return result.stream().findAny();
+    public List<Calender> findById(Long id) {
+        return jdbcTemplate.query("select c.id as calender_id, c.todo_list, c.password, c.created_at, c.updated_at, " +
+                "a.id as author_id, a.name, a.email, a.created_at, a.updated_at " +
+                "from calender c " +
+                "join author a on c.author_id = a.id " +
+                "where a.id = ?" , calenderRowMapper(), id);
     }
 
-
+    @Transactional
     @Override
-    public int updateTodoListAndName(Long id, String todoList, String name) {
-        return jdbcTemplate.update("update calender set todo_list = ?, name = ? where id = ?", todoList, name, id);
+    public void updateTodoListAndName(Long id, String todoList, String name) {
+        jdbcTemplate.update("update calender set todo_list = ? where id = ?", todoList, id);
+        jdbcTemplate.update("update author set name = ? where id = (" +
+                "select author_id from calender where id = ?)", name, id);
     }
+
+
 
     @Override
     public int removeCalender(Long id) {
-        return jdbcTemplate.update("delete from calender where id = ? ;", id);
+        return jdbcTemplate.update("delete from author where id = ? ;", id);
     }
+
+
 
 
     private RowMapper<Calender> calenderRowMapper() {
         return new RowMapper<Calender>() {
             @Override
             public Calender mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return new Calender(
-                        rs.getLong("id"),
-                        rs.getString("todo_list"),
+
+                Author author = new Author(
+                        rs.getLong("author_id"),
                         rs.getString("name"),
-                        rs.getString("password"),
+                        rs.getString("email"),
                         rs.getDate("created_at").toLocalDate(),
                         rs.getDate("updated_at").toLocalDate()
+                );
+
+                return new Calender(
+                        rs.getLong("calender_id"),
+                        rs.getString("todo_list"),
+                        rs.getString("password"),
+                        rs.getDate("created_at").toLocalDate(),
+                        rs.getDate("updated_at").toLocalDate(),
+                        author
                 );
             }
         };
     }
-
-
 }
