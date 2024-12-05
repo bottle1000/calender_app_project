@@ -1,9 +1,7 @@
 package pbc.calender_app_project.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import pbc.calender_app_project.dto.CalenderRequestDto;
 import pbc.calender_app_project.dto.CalenderResponseDto;
 import pbc.calender_app_project.entity.Calender;
@@ -37,7 +35,7 @@ public class CalenderServiceImpl implements CalenderService{
     @Override
     public List<CalenderResponseDto> findAllCalender() {
         return calenderRepository.findAllCalenders().stream()
-                .map(calender -> new CalenderResponseDto(calender.getTodoList(), calender.getAuthor()))
+                .map(calender -> new CalenderResponseDto(calender.getTodoList(), calender.getAuthor(),calender.getWriteDate(),calender.getUpdateDate()))
                 .toList();
     }
 
@@ -54,9 +52,10 @@ public class CalenderServiceImpl implements CalenderService{
 
         return calenders.stream()
                 .map(calender -> new CalenderResponseDto(
+                        calender.getId(),
                         calender.getTodoList(),
-                        calender.getAuthor()
-                )).toList();
+                        calender.getAuthor()))
+                        .toList();
     }
 
     @Override

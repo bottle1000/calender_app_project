@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import pbc.calender_app_project.entity.Author;
-import pbc.calender_app_project.entity.Calender;
 
 import java.time.LocalDate;
 
@@ -25,7 +24,7 @@ public class CalenderResponseDto {
         this.author = author;
     }
 
-    public CalenderResponseDto(String todoList, Author author) {
+    public CalenderResponseDto(String todoList, Author author, LocalDate writeDate, LocalDate updateDate) {
         this.todoList = todoList;
         this.author = author;
     }

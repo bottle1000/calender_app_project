@@ -1,9 +1,9 @@
 package pbc.calender_app_project.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
-import lombok.NonNull;
 import pbc.calender_app_project.entity.Author;
 
 import java.time.LocalDate;
@@ -17,6 +17,7 @@ public class CalenderRequestDto {
     private String password;
     private LocalDate writeDate;
     private LocalDate updateDate;
+    @Valid
     private Author author;
 
     public CalenderRequestDto(){}
