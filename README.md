@@ -189,4 +189,4 @@ DELETE /calenders/{id}
 
 ## ERD
 
-![ERD](/Users/bagbyeongcheon/Documents/calendarERD.png)
+![](/Users/bagbyeongcheon/Documents/calendarERD.png)
