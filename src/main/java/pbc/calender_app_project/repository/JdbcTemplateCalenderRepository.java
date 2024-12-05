@@ -80,7 +80,7 @@ public class JdbcTemplateCalenderRepository implements CalenderRepository {
 
     @Override
     public int removeCalender(Long id) {
-        return jdbcTemplate.update("delete from author where id = ? ;", id);
+        return jdbcTemplate.update("delete from calender where id = ? ;", id);
     }
 
 
