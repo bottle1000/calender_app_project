@@ -10,7 +10,7 @@ public interface CalenderService {
 
     List<CalenderResponseDto> findAllCalender();
 
-    List<CalenderResponseDto> findById(Long id);
+    List<CalenderResponseDto> findByUserId(Long id);
 
     CalenderResponseDto updateTodoListAndName(Long id, String todoList, String name, String password);
 

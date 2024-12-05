@@ -39,8 +39,13 @@ public class CalenderServiceImpl implements CalenderService{
                 .toList();
     }
 
+    /**
+     * 동일 유저 작성자의 할 일 목록 공개(1건 ~ N건)
+     * @param id : Author Id
+     * @return
+     */
     @Override
-    public List<CalenderResponseDto> findById(Long id) {
+    public List<CalenderResponseDto> findByUserId(Long id) {
         List<Calender> calenders = calenderRepository.findById(id);
 
         /**
@@ -50,14 +55,22 @@ public class CalenderServiceImpl implements CalenderService{
             throw new NotFoundAuthorException("작성자를 찾을 수 없습니다.");
         }
 
-        return calenders.stream()
+       return calenders.stream()
                 .map(calender -> new CalenderResponseDto(
                         calender.getId(),
                         calender.getTodoList(),
                         calender.getAuthor()))
-                        .toList();
+                .toList();
     }
 
+    /**
+     * 할 일 번호를 받아서 글의 password와 일치하면 할 일 수정과, 작성명 변경 가능
+     * @param id : 할 일 번호
+     * @param todoList
+     * @param name
+     * @param password
+     * @return
+     */
     @Override
     public CalenderResponseDto updateTodoListAndName(Long id, String todoList, String name, String password) {
 
@@ -76,19 +89,16 @@ public class CalenderServiceImpl implements CalenderService{
         calenderRepository.updateTodoListAndName(id, todoList, name);
 
         /**
-         * 일정의 author_id 가져오기
+         * 전체 할 일을 조회하여 파라미터로 들어온 할 일 번호와 매치시켜 그 할 일만 반환되게
          */
-        List<Calender> updateCalenderList = calenderRepository.findById(id);
-        if (updateCalenderList.isEmpty()) {
-            throw new NotFoundAuthorException("작성자를 찾을 수 없습니다.");
-        }
-
-        Calender updateCalender = updateCalenderList.stream()
+        Calender findCalender = calenderRepository.findAllCalenders().stream()
                 .filter(calender -> calender.getId().equals(id))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundAuthorException("작성자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalStateException("해당 일정이 없습니다."));
 
-        return new CalenderResponseDto(updateCalender.getId(), updateCalender.getTodoList(), updateCalender.getAuthor());
+
+
+        return new CalenderResponseDto(findCalender.getId(), findCalender.getTodoList(), findCalender.getAuthor());
     }
 
     @Override
@@ -113,7 +123,8 @@ public class CalenderServiceImpl implements CalenderService{
      * @return
      */
     private boolean validationPassword(Long id, String password){
-        boolean isValid = calenderRepository.findById(id).stream()
+        boolean isValid = calenderRepository.findAllCalenders().stream()
+                .filter(calender -> calender.getId().equals(id))
                 .anyMatch(calender -> calender.getPassword().equals(password));
 
         if (!isValid) {

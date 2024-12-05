@@ -53,7 +53,7 @@ public class CalenderController {
     @GetMapping("/{id}")
     public ResponseEntity<List<CalenderResponseDto>> findById(@PathVariable Long id) {
 
-        return new ResponseEntity<>(calenderService.findById(id), HttpStatus.OK);
+        return new ResponseEntity<>(calenderService.findByUserId(id), HttpStatus.OK);
     }
 
     /**

@@ -67,9 +67,13 @@ public class JdbcTemplateCalenderRepository implements CalenderRepository {
     @Transactional
     @Override
     public void updateTodoListAndName(Long id, String todoList, String name) {
-        jdbcTemplate.update("update calender set todo_list = ? where id = ?", todoList, id);
-        jdbcTemplate.update("update author set name = ? where id = (" +
-                "select author_id from calender where id = ?)", name, id);
+        Long authorId = jdbcTemplate.queryForObject("select author_id from calender where id = ?", Long.class, id);
+
+        if (authorId != null) {
+            jdbcTemplate.update("update calender set todo_list = ? where id = ?", todoList, id);
+
+            jdbcTemplate.update("update author set name = ? where id = ?", name, authorId);
+        }
     }
 
 
