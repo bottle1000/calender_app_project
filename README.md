@@ -188,4 +188,4 @@ DELETE /calenders/{id}
 ````
 
 ## ERD
-![calendarERD](https://github.com/user-attachments/assets/2833501b-f651-4fdb-bb8c-ca6c36dd995f)
+![calendarERD](https://github.com/user-attachments/assets/a965ac74-b213-44cf-aca0-962e0bffcd79)
