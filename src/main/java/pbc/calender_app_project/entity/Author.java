@@ -1,5 +1,6 @@
 package pbc.calender_app_project.entity;
 
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 public class Author {
     private Long id;
     private String name;
+    @Email(message = "이메일 형식이 다릅니다. 다시 작성해주세요.")
     private String email;
     private LocalDate createdAt;
     private LocalDate updatedAt;

@@ -1,5 +1,6 @@
 package pbc.calender_app_project.controller;
 
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,7 @@ public class CalenderController {
      * @return
      */
     @PostMapping
-    public ResponseEntity<CalenderResponseDto> createCalender(@RequestBody CalenderRequestDto dto) {
+    public ResponseEntity<CalenderResponseDto> createCalender(@Valid @RequestBody CalenderRequestDto dto) {
 
         return new ResponseEntity<>(calenderService.createCalender(dto), HttpStatus.CREATED);
     }
