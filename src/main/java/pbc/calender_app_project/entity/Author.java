@@ -11,7 +11,7 @@ import java.time.LocalDate;
 public class Author {
     private Long id;
     private String name;
-    @Email(message = "이메일 형식이 다릅니다. 다시 작성해주세요.")
+    @Email(message = "이메일 형식이 올바르지 않습니다.")
     private String email;
     private LocalDate createdAt;
     private LocalDate updatedAt;
