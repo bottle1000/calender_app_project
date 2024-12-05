@@ -39,9 +39,9 @@ public class CalenderController {
      * @return
      */
     @GetMapping
-    public List<CalenderResponseDto> findAllCalender() {
+    public ResponseEntity<List<CalenderResponseDto>> findAllCalender() {
 
-        return calenderService.findAllCalender();
+        return new ResponseEntity<>(calenderService.findAllCalender(), HttpStatus.OK);
     }
 
     /**
@@ -77,7 +77,8 @@ public class CalenderController {
      * @param dto
      */
     @DeleteMapping("/{id}")
-    public void removeCalender(@PathVariable Long id, @RequestBody CalenderRequestDto dto) {
+    public ResponseEntity<String> removeCalender(@PathVariable Long id, @RequestBody CalenderRequestDto dto) {
         calenderService.removeCalender(id, dto.getPassword());
+        return ResponseEntity.ok("정상적으로 삭제되었습니다.");
     }
 }

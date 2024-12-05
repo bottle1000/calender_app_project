@@ -7,6 +7,8 @@ import org.springframework.web.server.ResponseStatusException;
 import pbc.calender_app_project.dto.CalenderRequestDto;
 import pbc.calender_app_project.dto.CalenderResponseDto;
 import pbc.calender_app_project.entity.Calender;
+import pbc.calender_app_project.exception.InvalidPasswordException;
+import pbc.calender_app_project.exception.NotFoundAuthorException;
 import pbc.calender_app_project.repository.CalenderRepository;
 
 import java.util.*;
@@ -47,7 +49,7 @@ public class CalenderServiceImpl implements CalenderService{
          * NullPointException 방지
          */
         if (calenders.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 작성자의 일정이 존재하지 않습니다!");
+            throw new NotFoundAuthorException("작성자를 찾을 수 없습니다.");
         }
 
         return calenders.stream()
@@ -79,13 +81,13 @@ public class CalenderServiceImpl implements CalenderService{
          */
         List<Calender> updateCalenderList = calenderRepository.findById(id);
         if (updateCalenderList.isEmpty()) {
-            throw new IllegalStateException("조회 아이디가 없습니다.");
+            throw new NotFoundAuthorException("작성자를 찾을 수 없습니다.");
         }
 
         Calender updateCalender = updateCalenderList.stream()
                 .filter(calender -> calender.getId().equals(id))
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("조회 아이디가 없습니다."));
+                .orElseThrow(() -> new NotFoundAuthorException("작성자를 찾을 수 없습니다."));
 
         return new CalenderResponseDto(updateCalender.getId(), updateCalender.getTodoList(), updateCalender.getAuthor());
     }
@@ -116,7 +118,7 @@ public class CalenderServiceImpl implements CalenderService{
                 .anyMatch(calender -> calender.getPassword().equals(password));
 
         if (!isValid) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 맞지 않습니다.");
+            throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
         }
         return true;
     }
