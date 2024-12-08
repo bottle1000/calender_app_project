@@ -7,6 +7,7 @@ import pbc.calender_app_project.dto.CalenderResponseDto;
 import pbc.calender_app_project.entity.Calender;
 import pbc.calender_app_project.exception.InvalidPasswordException;
 import pbc.calender_app_project.exception.NotFoundAuthorException;
+import pbc.calender_app_project.exception.NotFoundCalenderException;
 import pbc.calender_app_project.repository.CalenderRepository;
 
 import java.util.*;
@@ -94,9 +95,7 @@ public class CalenderServiceImpl implements CalenderService{
         Calender findCalender = calenderRepository.findAllCalenders().stream()
                 .filter(calender -> calender.getId().equals(id))
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("해당 일정이 없습니다."));
-
-
+                .orElseThrow(() -> new NotFoundCalenderException("해당 일정이 없습니다."));
 
         return new CalenderResponseDto(findCalender.getId(), findCalender.getTodoList(), findCalender.getAuthor());
     }
