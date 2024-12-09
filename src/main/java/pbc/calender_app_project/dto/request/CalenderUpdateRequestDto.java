@@ -1,9 +1,9 @@
-package pbc.calender_app_project.dto;
+package pbc.calender_app_project.dto.request;
 
 import lombok.Getter;
 
 @Getter
-public class UpdateRequestDto {
+public class CalenderUpdateRequestDto {
     private String todolist;
     private AuthorDto author;
     private String password;

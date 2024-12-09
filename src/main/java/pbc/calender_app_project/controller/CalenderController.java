@@ -3,12 +3,14 @@ package pbc.calender_app_project.controller;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pbc.calender_app_project.dto.CalenderRequestDto;
-import pbc.calender_app_project.dto.CalenderResponseDto;
-import pbc.calender_app_project.dto.UpdateRequestDto;
+import pbc.calender_app_project.dto.request.CalenderCreateRequestDto;
+import pbc.calender_app_project.dto.response.CalenderResponseDto;
+import pbc.calender_app_project.dto.request.CalenderUpdateRequestDto;
+import pbc.calender_app_project.paging.ResponsePage;
 import pbc.calender_app_project.service.CalenderService;
 
 import java.util.List;
@@ -18,7 +20,7 @@ import java.util.List;
 public class CalenderController {
 
     private static final Logger log = LoggerFactory.getLogger(CalenderController.class);
-    private CalenderService calenderService;
+    private final CalenderService calenderService;
 
     public CalenderController(CalenderService calenderService) {
         this.calenderService = calenderService;
@@ -30,7 +32,7 @@ public class CalenderController {
      * @return
      */
     @PostMapping
-    public ResponseEntity<CalenderResponseDto> createCalender(@Valid @RequestBody CalenderRequestDto dto) {
+    public ResponseEntity<CalenderResponseDto> createCalender(@Valid @RequestBody CalenderCreateRequestDto dto) {
 
         return new ResponseEntity<>(calenderService.createCalender(dto), HttpStatus.CREATED);
     }
@@ -52,9 +54,17 @@ public class CalenderController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<List<CalenderResponseDto>> findById(@PathVariable Long id) {
-
         return new ResponseEntity<>(calenderService.findByUserId(id), HttpStatus.OK);
     }
+
+    @GetMapping("/paged")
+    public ResponseEntity<ResponsePage> findCalenders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return new ResponseEntity<>(calenderService.findCalenders(page, size), HttpStatus.OK);
+    }
+
+
 
     /**
      * 수정 controller
@@ -63,7 +73,7 @@ public class CalenderController {
      * @return
      */
     @PutMapping("/{id}")
-    public ResponseEntity<CalenderResponseDto> updateTodoListAndName(@PathVariable Long id, @RequestBody UpdateRequestDto dto) {
+    public ResponseEntity<CalenderResponseDto> updateTodoListAndName(@PathVariable Long id, @RequestBody CalenderUpdateRequestDto dto) {
 
         /**
          * 요청 데이터 값 확인
@@ -78,7 +88,7 @@ public class CalenderController {
      * @param dto
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> removeCalender(@PathVariable Long id, @RequestBody CalenderRequestDto dto) {
+    public ResponseEntity<String> removeCalender(@PathVariable Long id, @RequestBody CalenderCreateRequestDto dto) {
         calenderService.removeCalender(id, dto.getPassword());
         return ResponseEntity.ok("정상적으로 삭제되었습니다.");
     }

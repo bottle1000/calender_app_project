@@ -2,12 +2,14 @@ package pbc.calender_app_project.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import pbc.calender_app_project.dto.CalenderRequestDto;
-import pbc.calender_app_project.dto.CalenderResponseDto;
+import pbc.calender_app_project.dto.entity.CalenderPagedDto;
+import pbc.calender_app_project.dto.request.CalenderCreateRequestDto;
+import pbc.calender_app_project.dto.response.CalenderResponseDto;
 import pbc.calender_app_project.entity.Calender;
 import pbc.calender_app_project.exception.InvalidPasswordException;
 import pbc.calender_app_project.exception.NotFoundAuthorException;
 import pbc.calender_app_project.exception.NotFoundCalenderException;
+import pbc.calender_app_project.paging.ResponsePage;
 import pbc.calender_app_project.repository.CalenderRepository;
 
 import java.util.*;
@@ -23,7 +25,7 @@ public class CalenderServiceImpl implements CalenderService{
     }
 
     @Override
-    public CalenderResponseDto createCalender(CalenderRequestDto dto) {
+    public CalenderResponseDto createCalender(CalenderCreateRequestDto dto) {
 
         Calender calender = new Calender(dto.getTodoList(), dto.getPassword(),dto.getAuthor());
         return calenderRepository.createCalender(calender);
@@ -62,6 +64,14 @@ public class CalenderServiceImpl implements CalenderService{
                         calender.getTodoList(),
                         calender.getAuthor()))
                 .toList();
+    }
+
+    @Override
+    public ResponsePage findCalenders(int page, int size) {
+        int offset = page * size;
+        List<CalenderPagedDto> calenderList = calenderRepository.findCalenders(offset, size);
+
+        return new ResponsePage(calenderList);
     }
 
     /**

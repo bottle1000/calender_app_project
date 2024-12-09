@@ -1,4 +1,4 @@
-package pbc.calender_app_project.dto;
+package pbc.calender_app_project.dto.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +9,7 @@ import pbc.calender_app_project.entity.Author;
 import java.time.LocalDate;
 
 @Getter
-public class CalenderRequestDto {
+public class CalenderCreateRequestDto {
 
     @Size(message = "할 일은 200자 이내로 입력해주세요.", max = 200)
     private String todoList;
@@ -19,6 +19,4 @@ public class CalenderRequestDto {
     private LocalDate updateDate;
     @Valid
     private Author author;
-
-    public CalenderRequestDto(){}
 }

@@ -1,4 +1,4 @@
-package pbc.calender_app_project.dto;
+package pbc.calender_app_project.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

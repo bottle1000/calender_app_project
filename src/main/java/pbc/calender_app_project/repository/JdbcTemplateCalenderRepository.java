@@ -7,7 +7,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import pbc.calender_app_project.dto.CalenderResponseDto;
+import pbc.calender_app_project.dto.entity.AuthorPagedDto;
+import pbc.calender_app_project.dto.entity.CalenderPagedDto;
+import pbc.calender_app_project.dto.response.CalenderResponseDto;
 import pbc.calender_app_project.entity.Author;
 import pbc.calender_app_project.entity.Calender;
 
@@ -19,7 +21,7 @@ import java.util.*;
 @Slf4j
 @Repository
 public class JdbcTemplateCalenderRepository implements CalenderRepository {
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     public JdbcTemplateCalenderRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -64,6 +66,15 @@ public class JdbcTemplateCalenderRepository implements CalenderRepository {
                 "where a.id = ?" , calenderRowMapper(), id);
     }
 
+    @Override
+    public List<CalenderPagedDto> findCalenders(int offset, int size) {
+        return jdbcTemplate.query("select c.id as calender_id, c.todo_list, " +
+                "a.id as author_id, a.name " +
+                "from calender c " +
+                "join author a on c.author_id = a.id " +
+                "limit ?, ?", new Object[]{offset, size}, calenderPagedRowMapper());
+    }
+
     @Transactional
     @Override
     public void updateTodoListAndName(Long id, String todoList, String name) {
@@ -82,8 +93,6 @@ public class JdbcTemplateCalenderRepository implements CalenderRepository {
     public int removeCalender(Long id) {
         return jdbcTemplate.update("delete from calender where id = ? ;", id);
     }
-
-
 
 
     private RowMapper<Calender> calenderRowMapper() {
@@ -105,6 +114,28 @@ public class JdbcTemplateCalenderRepository implements CalenderRepository {
                         rs.getString("password"),
                         rs.getDate("created_at").toLocalDate(),
                         rs.getDate("updated_at").toLocalDate(),
+                        author
+                );
+            }
+        };
+    }
+
+    /**
+     * paging 처리 전용 RowMapper 생성
+     * @return
+     */
+    private RowMapper<CalenderPagedDto> calenderPagedRowMapper() {
+        return new RowMapper<CalenderPagedDto>() {
+            @Override
+            public CalenderPagedDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+                AuthorPagedDto author = new AuthorPagedDto(
+                        rs.getLong("author_id"),
+                        rs.getString("name")
+                );
+
+                return new CalenderPagedDto(
+                        rs.getLong("calender_id"),
+                        rs.getString("todo_list"),
                         author
                 );
             }
