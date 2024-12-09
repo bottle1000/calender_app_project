@@ -1,6 +1,7 @@
 package pbc.calender_app_project.controller;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -15,11 +16,10 @@ import pbc.calender_app_project.service.CalenderService;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/calenders")
 public class CalenderController {
-
-    private static final Logger log = LoggerFactory.getLogger(CalenderController.class);
     private final CalenderService calenderService;
 
     public CalenderController(CalenderService calenderService) {
@@ -59,6 +59,10 @@ public class CalenderController {
 
     @GetMapping("/paged")
     public ResponseEntity<ResponsePage> findCalenders(
+            /**
+             * page = 페이지 번호, 0번부터 시작
+             * size = 한 페이지에 표시할 데이터 수, 한 페이지에 10개의 항목 표시
+             */
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return new ResponseEntity<>(calenderService.findCalenders(page, size), HttpStatus.OK);

@@ -22,4 +22,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handlerNotFoundCalenderException(NotFoundCalenderException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(PageOutOfRangeException.class)
+    public ResponseEntity<String> handlerPageOutOfRangeException(PageOutOfRangeException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
 }

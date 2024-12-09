@@ -47,6 +47,10 @@ public class JdbcTemplateCalenderRepository implements CalenderRepository {
         return new CalenderResponseDto(key.longValue(), calender.getTodoList(), author);
     }
 
+    /**
+     * 할 일 전체 조회
+     * @return
+     */
     @Override
     public List<Calender> findAllCalenders() {
         List<Calender> query = jdbcTemplate.query(
@@ -57,6 +61,11 @@ public class JdbcTemplateCalenderRepository implements CalenderRepository {
         return query;
     }
 
+    /**
+     * 회원 ID(고유 식별자)를 통해서 회원이 올린 일정들만 나열
+     * @param id : 회원 id
+     * @return
+     */
     @Override
     public List<Calender> findById(Long id) {
         return jdbcTemplate.query("select c.id as calender_id, c.todo_list, c.password, c.created_at, c.updated_at, " +
@@ -66,6 +75,12 @@ public class JdbcTemplateCalenderRepository implements CalenderRepository {
                 "where a.id = ?" , calenderRowMapper(), id);
     }
 
+    /**
+     * 페이징 메서드
+     * @param offset : 시작 위치
+     * @param size : 한 페이지에 표시할 데이터 수
+     * @return
+     */
     @Override
     public List<CalenderPagedDto> findCalenders(int offset, int size) {
         return jdbcTemplate.query("select c.id as calender_id, c.todo_list, " +
@@ -75,6 +90,12 @@ public class JdbcTemplateCalenderRepository implements CalenderRepository {
                 "limit ?, ?", new Object[]{offset, size}, calenderPagedRowMapper());
     }
 
+    /**
+     * 둘 중 업데이트가 하나라도 성공하지 않으면 둘 다 업데이트X, 둘 다 성공해야 업데이트를 적용 하기 위해 트랜잭션 적용
+     * @param id : 일정 id로 업데이트
+     * @param todoList
+     * @param name
+     */
     @Transactional
     @Override
     public void updateTodoListAndName(Long id, String todoList, String name) {
@@ -87,8 +108,11 @@ public class JdbcTemplateCalenderRepository implements CalenderRepository {
         }
     }
 
-
-
+    /**
+     * 메서드 호출시 해당 일정이 삭제됩니다.
+     * @param id : 일정 id
+     * @return
+     */
     @Override
     public int removeCalender(Long id) {
         return jdbcTemplate.update("delete from calender where id = ? ;", id);

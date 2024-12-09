@@ -21,11 +21,4 @@ public class Calender {
         this.password = password;
         this.author = author;
     }
-
-    public Calender(Long id,String todoList, LocalDate writeDate, LocalDate updateDate) {
-        this.id = id;
-        this.todoList = todoList;
-        this.writeDate = writeDate;
-        this.updateDate = updateDate;
-    }
 }

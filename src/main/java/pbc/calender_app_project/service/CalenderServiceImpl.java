@@ -9,6 +9,7 @@ import pbc.calender_app_project.entity.Calender;
 import pbc.calender_app_project.exception.InvalidPasswordException;
 import pbc.calender_app_project.exception.NotFoundAuthorException;
 import pbc.calender_app_project.exception.NotFoundCalenderException;
+import pbc.calender_app_project.exception.PageOutOfRangeException;
 import pbc.calender_app_project.paging.ResponsePage;
 import pbc.calender_app_project.repository.CalenderRepository;
 
@@ -44,7 +45,7 @@ public class CalenderServiceImpl implements CalenderService{
 
     /**
      * 동일 유저 작성자의 할 일 목록 공개(1건 ~ N건)
-     * @param id : Author Id
+     * @param id : Author id
      * @return
      */
     @Override
@@ -68,8 +69,15 @@ public class CalenderServiceImpl implements CalenderService{
 
     @Override
     public ResponsePage findCalenders(int page, int size) {
+        /**
+         * 시작위치(offset) 계산
+         */
         int offset = page * size;
+
         List<CalenderPagedDto> calenderList = calenderRepository.findCalenders(offset, size);
+        if (calenderList.isEmpty()) {
+            throw new PageOutOfRangeException("더 이상 데이터가 존재하지 않습니다!");
+        }
 
         return new ResponsePage(calenderList);
     }
